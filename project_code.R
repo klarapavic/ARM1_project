@@ -20,10 +20,7 @@ invisible(lapply(required_packages, library, character.only = TRUE))
 
 
 ##### ----- Load Factor Data ----- #####
-load("group_6_data.RData")
-#dtv <- read.csv("dolvol.csv", stringsAsFactors = FALSE)[, c("date", "ret")]
-#noa <- read.csv("noa.csv", stringsAsFactors = FALSE)[, c("date", "ret")]
-#prc <- read.csv("prc.csv", stringsAsFactors = FALSE)[, c("date", "ret")]
+load("project_data.RData")
 
 names(dtv) <- c("date", "dtv")
 names(noa) <- c("date", "noa")
@@ -38,10 +35,10 @@ factors <- merge(factors_tmp, prc, by = "date")
 
 ###### ----- Load Fama-French Data ----- #####
 
-#ff <- read.csv("FF.csv", stringsAsFactors = FALSE)
 ff$RF <- as.numeric(ff$RF) / 100
 ff$Mkt_RF <- as.numeric(ff$Mkt.RF) / 100
 ff$market_total <- ff$RF + ff$Mkt_RF
+
 # NOTE: NOA data starts from 1950s
 ff$date <- seq(as.Date("1926-07-31"), by = "month", length.out = nrow(ff))
 
@@ -73,10 +70,6 @@ df_spy <- merge(factors, spy_excess_df[, c("date", "sp500", "RF")], by = "date")
 
 # df_ff  --> factors + FF market return + RF (starts 1930s or earlier)
 # df_spy --> factors + SP500 excess return + RF (starts 1993)
-
-head(df_ff)
-head(df_spy)
-
 
 #### ----- Correlations and Interactions ----- ####
 
@@ -222,10 +215,8 @@ performance_table %>%
 # NOTE: These interpretations align with rolling Sharpe plots, cumulative return curves, and cross-factor analysis.
 
 
-# Addining another risk metric: Information Ratio
-# What is the Information Ratio?
-# IR = Avg. Active Return / Tracking Error
 
+# IR = Avg. Active Return / Tracking Error
 # Active Return = Factor return – Benchmark return (S&P 500 here)
 # Tracking Error = Standard deviation of active return
 # IR > 0: Factor outperformed the benchmark on a risk-adjusted basis
@@ -327,7 +318,6 @@ combined_table %>%
 t.test(df_spy$dtv - df_spy$sp500)
 t.test(df_spy$noa - df_spy$sp500)
 t.test(df_spy$prc - df_spy$sp500)
-
 
 # simple CAPM-style test "Would my factor outperform the market (benchmark = sp500)?"
 
@@ -738,4 +728,5 @@ for (fac in c("noa")) {
 results3
 
 #All variables are significant and alpha is smallest out of all models. R2 increased 5 percentage points, but is still low.
+
 
